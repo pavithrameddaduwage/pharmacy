@@ -1,0 +1,62 @@
+[
+  {
+    "Id": 1,
+    "Name": "Paracetamol",
+    "Category": "Pain Relief",
+    "Dosage": "500mg",
+    "Price": 5.50,
+    "Stock": 200,
+    "Supplier": "MediSupply",
+    "ExpiryDate": "2027-12-22T00:00:00",
+    "DiscountPercent": 0,
+    "RequiresPrescription": false
+  },
+  {
+    "Id": 2,
+    "Name": "Amoxicillin",
+    "Category": "Antibiotic",
+    "Dosage": "250mg",
+    "Price": 12.00,
+    "Stock": 80,
+    "Supplier": "PharmaCorp",
+    "ExpiryDate": "2026-07-12T00:00:00",
+    "DiscountPercent": 10,
+    "RequiresPrescription": true
+  },
+  {
+    "Id": 3,
+    "Name": "Cetirizine",
+    "Category": "Antihistamine",
+    "Dosage": "10mg",
+    "Price": 7.25,
+    "Stock": 150,
+    "Supplier": "MediSupply",
+    "ExpiryDate": "2027-06-22T00:00:00",
+    "DiscountPercent": 5,
+    "RequiresPrescription": false
+  },
+  {
+    "Id": 4,
+    "Name": "Ibuprofen",
+    "Category": "Pain Relief",
+    "Dosage": "400mg",
+    "Price": 6.75,
+    "Stock": 120,
+    "Supplier": "HealthPlus",
+    "ExpiryDate": "2028-06-22T00:00:00",
+    "DiscountPercent": 0,
+    "RequiresPrescription": false
+  },
+  {
+    "Id": 5,
+    "Name": "Metformin",
+    "Category": "Diabetes",
+    "Dosage": "500mg",
+    "Price": 9.40,
+    "Stock": 60,
+    "Supplier": "PharmaCorp",
+    "ExpiryDate": "2026-07-17T00:00:00",
+    "DiscountPercent": 0,
+    "RequiresPrescription": true
+  }
+]

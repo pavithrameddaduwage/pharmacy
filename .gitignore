@@ -4,5 +4,3 @@ packages/
 .vs/
 *.user
 *.suo
-*.json
-!packages.config
