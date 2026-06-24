@@ -12,6 +12,7 @@ namespace SmartMedPharmacy.Forms
     public class ReportsForm : Form
     {
         private TextBox txtOutput;
+        private string _currentReport = "";
 
         public ReportsForm()
         {
@@ -33,10 +34,11 @@ namespace SmartMedPharmacy.Forms
             btnHistory.Width = 200;
             btnHistory.Click += (s, e) => ShowOrderHistory();
 
-            Button btnExport = MakeButton("Export Order History (CSV/Excel)", new Point(20, 65));
-            btnExport.Width = 320;
+            // One download button that exports whichever report is currently on screen.
+            Button btnExport = MakeButton("Download Current Report (CSV/Excel)", new Point(20, 65));
+            btnExport.Width = 700;
             btnExport.BackColor = Color.FromArgb(0, 90, 160);
-            btnExport.Click += (s, e) => ExportOrderHistory();
+            btnExport.Click += (s, e) => ExportCurrentReport();
 
             txtOutput = new TextBox
             {
@@ -79,8 +81,29 @@ namespace SmartMedPharmacy.Forms
             return btn;
         }
 
+        private void ExportCurrentReport()
+        {
+            switch (_currentReport)
+            {
+                case "Sales":
+                    ExportSalesReport();
+                    break;
+                case "Stock":
+                    ExportStockReport();
+                    break;
+                case "History":
+                    ExportOrderHistory();
+                    break;
+                default:
+                    MessageBox.Show("Open a report first (Sales, Stock or Order History), then download.",
+                        "No Report Selected", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    break;
+            }
+        }
+
         private void ShowSalesReport()
         {
+            _currentReport = "Sales";
             DataManager.Instance.Reload();
             DataManager dm = DataManager.Instance;
             StringBuilder sb = new StringBuilder();
@@ -108,6 +131,7 @@ namespace SmartMedPharmacy.Forms
 
         private void ShowStockReport()
         {
+            _currentReport = "Stock";
             DataManager.Instance.Reload();
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("========================= STOCK REPORT =========================");
@@ -134,6 +158,7 @@ namespace SmartMedPharmacy.Forms
 
         private void ShowOrderHistory()
         {
+            _currentReport = "History";
             DataManager.Instance.Reload();
             DataManager dm = DataManager.Instance;
             StringBuilder sb = new StringBuilder();
@@ -190,6 +215,96 @@ namespace SmartMedPharmacy.Forms
                                 item.LineTotal,
                                 o.Total));
                         }
+                    }
+                    File.WriteAllText(dialog.FileName, sb.ToString());
+                    MessageBox.Show("Exported to " + dialog.FileName, "Success",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Export failed: " + ex.Message, "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void ExportSalesReport()
+        {
+            try
+            {
+                DataManager.Instance.Reload();
+                if (DataManager.Instance.Orders.Count == 0)
+                {
+                    MessageBox.Show("There are no orders to export yet. Place an order first.",
+                        "Nothing to Export", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+
+                using (SaveFileDialog dialog = new SaveFileDialog())
+                {
+                    dialog.Filter = "CSV files (*.csv)|*.csv";
+                    dialog.FileName = "sales_report.csv";
+                    if (dialog.ShowDialog() != DialogResult.OK)
+                        return;
+
+                    DataManager dm = DataManager.Instance;
+                    StringBuilder sb = new StringBuilder();
+                    sb.AppendLine("OrderId,Customer,Date,Status,OrderTotal");
+                    foreach (Order o in dm.Orders.OrderByDescending(o => o.OrderDate))
+                    {
+                        Customer c = dm.GetCustomerById(o.CustomerId);
+                        sb.AppendLine(string.Join(",",
+                            o.Id,
+                            Escape(c == null ? "Unknown" : c.FullName),
+                            o.OrderDate.ToString("yyyy-MM-dd"),
+                            Escape(o.Status),
+                            o.Total));
+                    }
+                    File.WriteAllText(dialog.FileName, sb.ToString());
+                    MessageBox.Show("Exported to " + dialog.FileName, "Success",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Export failed: " + ex.Message, "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void ExportStockReport()
+        {
+            try
+            {
+                DataManager.Instance.Reload();
+                if (DataManager.Instance.Medicines.Count == 0)
+                {
+                    MessageBox.Show("There are no medicines to export.",
+                        "Nothing to Export", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+
+                using (SaveFileDialog dialog = new SaveFileDialog())
+                {
+                    dialog.Filter = "CSV files (*.csv)|*.csv";
+                    dialog.FileName = "stock_report.csv";
+                    if (dialog.ShowDialog() != DialogResult.OK)
+                        return;
+
+                    StringBuilder sb = new StringBuilder();
+                    sb.AppendLine("Id,Name,Category,Dosage,Price,Stock,Supplier,ExpiryDate,Status");
+                    foreach (Medicine m in DataManager.Instance.Medicines.OrderBy(m => m.Name))
+                    {
+                        sb.AppendLine(string.Join(",",
+                            m.Id,
+                            Escape(m.Name),
+                            Escape(m.Category),
+                            Escape(m.Dosage),
+                            m.Price,
+                            m.Stock,
+                            Escape(m.Supplier),
+                            m.ExpiryDate.ToString("yyyy-MM-dd"),
+                            Escape(m.ExpiryStatus())));
                     }
                     File.WriteAllText(dialog.FileName, sb.ToString());
                     MessageBox.Show("Exported to " + dialog.FileName, "Success",

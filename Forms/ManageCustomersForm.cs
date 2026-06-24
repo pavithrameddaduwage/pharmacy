@@ -45,6 +45,7 @@ namespace SmartMedPharmacy.Forms
                 AlternatingRowsDefaultCellStyle = { BackColor = Color.FromArgb(240, 248, 248) }
             };
             grid.SelectionChanged += Grid_SelectionChanged;
+            grid.CellClick += Grid_CellClick;
             Controls.Add(grid);
 
             // Relationship view: the selected customer's orders.
@@ -196,7 +197,23 @@ namespace SmartMedPharmacy.Forms
 
         private void Grid_SelectionChanged(object sender, EventArgs e)
         {
-            Customer c = Selected();
+            PopulateFields(Selected());
+        }
+
+        // Reading directly from the clicked row guarantees the details show even
+        // if the bound selection has not updated yet.
+        private void Grid_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0)
+                return;
+            object cell = grid.Rows[e.RowIndex].Cells["Id"].Value;
+            if (cell == null)
+                return;
+            PopulateFields(DataManager.Instance.GetCustomerById(Convert.ToInt32(cell)));
+        }
+
+        private void PopulateFields(Customer c)
+        {
             if (c == null)
                 return;
             txtUsername.Text = c.Username;
