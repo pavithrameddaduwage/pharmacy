@@ -61,7 +61,7 @@ namespace SmartMedPharmacy.Forms
             ordersGrid = new DataGridView
             {
                 Location = new Point(20, 355),
-                Size = new Size(880, 200),
+                Size = new Size(520, 200),
                 ReadOnly = true,
                 AllowUserToAddRows = false,
                 RowHeadersVisible = false,

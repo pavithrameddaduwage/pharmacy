@@ -170,7 +170,7 @@ namespace SmartMedPharmacy.Forms
                 YouPay = m.EffectivePrice(),
                 m.Stock,
                 Rx = m.RequiresPrescription,
-                ExpiringSoon = m.IsExpiringSoon()
+                Status = m.ExpiryStatus()
             }).ToList();
         }
 

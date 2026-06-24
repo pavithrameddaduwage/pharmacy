@@ -14,6 +14,7 @@ namespace SmartMedPharmacy.Forms
         private Label lblStock;
         private Label lblActiveOrders;
         private Label lblExpiring;
+        private Label lblExpired;
 
         public AdminDashboardForm(Admin admin)
         {
@@ -25,7 +26,7 @@ namespace SmartMedPharmacy.Forms
         private void InitializeComponent()
         {
             Text = "Admin Dashboard - SmartMedPharmacy";
-            Size = new Size(820, 540);
+            Size = new Size(820, 620);
             StartPosition = FormStartPosition.CenterScreen;
             BackColor = Color.White;
 
@@ -42,19 +43,20 @@ namespace SmartMedPharmacy.Forms
             lblSales = MakeCard("Total Sales", new Point(25, 70));
             lblStock = MakeCard("Medicines In Stock", new Point(285, 70));
             lblActiveOrders = MakeCard("Active Orders", new Point(545, 70));
-            lblExpiring = MakeCard("Expiring Soon", new Point(25, 180));
+            lblExpiring = MakeCard("Expiring Soon", new Point(25, 175));
+            lblExpired = MakeCard("Expired Medicines", new Point(285, 175));
 
-            AddNav("Manage Medicines", new Point(285, 180), (s, e) => Open(new ManageMedicinesForm()));
-            AddNav("Manage Customers", new Point(545, 180), (s, e) => Open(new ManageCustomersForm()));
-            AddNav("Manage Orders", new Point(285, 250), (s, e) => Open(new ManageOrdersForm()));
-            AddNav("Reports", new Point(545, 250), (s, e) => Open(new ReportsForm()));
+            AddNav("Manage Medicines", new Point(25, 290), (s, e) => Open(new ManageMedicinesForm()));
+            AddNav("Manage Customers", new Point(285, 290), (s, e) => Open(new ManageCustomersForm()));
+            AddNav("Manage Orders", new Point(545, 290), (s, e) => Open(new ManageOrdersForm()));
+            AddNav("Reports", new Point(25, 360), (s, e) => Open(new ReportsForm()));
 
             Button btnRefresh = new Button
             {
                 Text = "Refresh Stats",
-                Location = new Point(25, 320),
+                Location = new Point(285, 360),
                 Width = 230,
-                Height = 40,
+                Height = 55,
                 FlatStyle = FlatStyle.Flat
             };
             btnRefresh.Click += (s, e) => RefreshStats();
@@ -63,9 +65,9 @@ namespace SmartMedPharmacy.Forms
             Button btnLogout = new Button
             {
                 Text = "Logout",
-                Location = new Point(25, 420),
+                Location = new Point(545, 360),
                 Width = 230,
-                Height = 40,
+                Height = 55,
                 BackColor = Color.FromArgb(180, 60, 60),
                 ForeColor = Color.White,
                 FlatStyle = FlatStyle.Flat
@@ -136,11 +138,13 @@ namespace SmartMedPharmacy.Forms
             int stock = dm.Medicines.Sum(m => m.Stock);
             int active = dm.Orders.Count(o => o.Status != "Delivered");
             int expiring = dm.Medicines.Count(m => m.IsExpiringSoon());
+            int expired = dm.Medicines.Count(m => m.IsExpired());
 
             lblSales.Text = Money.Format(totalSales);
             lblStock.Text = stock.ToString();
             lblActiveOrders.Text = active.ToString();
             lblExpiring.Text = expiring.ToString();
+            lblExpired.Text = expired.ToString();
         }
     }
 }

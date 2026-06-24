@@ -99,11 +99,12 @@ namespace SmartMedPharmacy.Forms
 
         private void ShowExpiryNotice()
         {
+            // Customers are only notified about items expiring soon, never expired stock.
             var expiring = DataManager.Instance.Medicines.Where(m => m.IsExpiringSoon()).ToList();
             if (expiring.Count == 0)
                 return;
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine("The following medicines are expiring within 30 days:");
+            sb.AppendLine("Medicines expiring within 30 days:");
             foreach (Medicine m in expiring)
                 sb.AppendLine(" - " + m.Name + " (expires " + m.ExpiryDate.ToString("yyyy-MM-dd") + ")");
             MessageBox.Show(sb.ToString(), "Expiry Notice",

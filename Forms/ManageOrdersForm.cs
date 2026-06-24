@@ -22,7 +22,7 @@ namespace SmartMedPharmacy.Forms
         private void InitializeComponent()
         {
             Text = "Manage Orders";
-            Size = new Size(940, 560);
+            Size = new Size(940, 600);
             StartPosition = FormStartPosition.CenterScreen;
             BackColor = Color.White;
 

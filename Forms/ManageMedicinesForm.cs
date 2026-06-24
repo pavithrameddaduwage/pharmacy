@@ -30,7 +30,7 @@ namespace SmartMedPharmacy.Forms
         private void InitializeComponent()
         {
             Text = "Manage Medicines";
-            Size = new Size(960, 560);
+            Size = new Size(960, 600);
             StartPosition = FormStartPosition.CenterScreen;
             BackColor = Color.White;
 
@@ -128,7 +128,7 @@ namespace SmartMedPharmacy.Forms
                     Expiry = m.ExpiryDate.ToString("yyyy-MM-dd"),
                     Discount = m.DiscountPercent,
                     Rx = m.RequiresPrescription,
-                    ExpiringSoon = m.IsExpiringSoon()
+                    Status = m.ExpiryStatus()
                 }).ToList();
         }
 

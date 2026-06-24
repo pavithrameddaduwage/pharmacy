@@ -21,7 +21,7 @@ namespace SmartMedPharmacy.Forms
         private void InitializeComponent()
         {
             Text = "Reports";
-            Size = new Size(760, 560);
+            Size = new Size(760, 600);
             StartPosition = FormStartPosition.CenterScreen;
             BackColor = Color.White;
 
@@ -112,15 +112,15 @@ namespace SmartMedPharmacy.Forms
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("========================= STOCK REPORT =========================");
             sb.AppendLine();
-            sb.AppendLine(string.Format("{0,-4} {1,-18} {2,-16} {3,7} {4,-12} {5,-12}",
-                "Id", "Name", "Category", "Stock", "Expiry", "Expiring"));
-            sb.AppendLine(new string('-', 74));
+            sb.AppendLine(string.Format("{0,-4} {1,-18} {2,-16} {3,7} {4,-12} {5,-14}",
+                "Id", "Name", "Category", "Stock", "Expiry", "Status"));
+            sb.AppendLine(new string('-', 76));
             foreach (Medicine m in DataManager.Instance.Medicines.OrderBy(m => m.Name))
             {
-                sb.AppendLine(string.Format("{0,-4} {1,-18} {2,-16} {3,7} {4,-12} {5,-12}",
+                sb.AppendLine(string.Format("{0,-4} {1,-18} {2,-16} {3,7} {4,-12} {5,-14}",
                     m.Id, Trim(m.Name, 18), Trim(m.Category, 16), m.Stock,
                     m.ExpiryDate.ToString("yyyy-MM-dd"),
-                    m.IsExpiringSoon() ? "YES <<" : "no"));
+                    m.ExpiryStatus()));
             }
             txtOutput.Text = sb.ToString();
         }

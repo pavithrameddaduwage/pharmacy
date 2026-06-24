@@ -15,9 +15,23 @@ namespace SmartMedPharmacy.Models
         public decimal DiscountPercent { get; set; }
         public bool RequiresPrescription { get; set; }
 
+        public bool IsExpired()
+        {
+            return ExpiryDate.Date < DateTime.Now.Date;
+        }
+
         public bool IsExpiringSoon()
         {
-            return ExpiryDate <= DateTime.Now.AddDays(30);
+            return !IsExpired() && ExpiryDate <= DateTime.Now.AddDays(30);
+        }
+
+        public string ExpiryStatus()
+        {
+            if (IsExpired())
+                return "EXPIRED";
+            if (IsExpiringSoon())
+                return "Expiring Soon";
+            return "OK";
         }
 
         public decimal EffectivePrice()
