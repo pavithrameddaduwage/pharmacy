@@ -76,6 +76,19 @@ namespace SmartMedPharmacy.Forms
             };
             btnPlace.Click += BtnPlace_Click;
             Controls.Add(btnPlace);
+
+            Button btnBack = new Button
+            {
+                Text = "Back",
+                Location = new Point(245, 390),
+                Width = 150,
+                Height = 35,
+                BackColor = Color.FromArgb(70, 70, 70),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat
+            };
+            btnBack.Click += (s, e) => Close();
+            Controls.Add(btnBack);
         }
 
         private void LoadGrid()
@@ -89,7 +102,7 @@ namespace SmartMedPharmacy.Forms
                 i.UnitPrice,
                 i.LineTotal
             }).ToList();
-            lblTotal.Text = "Total: " + _cart.Sum(i => i.LineTotal).ToString("C");
+            lblTotal.Text = "Total: " + Money.Format(_cart.Sum(i => i.LineTotal));
         }
 
         private void BtnRemove_Click(object sender, EventArgs e)

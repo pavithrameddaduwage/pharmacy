@@ -72,10 +72,58 @@ namespace SmartMedPharmacy.Forms
             };
             btnApply.Click += BtnApply_Click;
             Controls.Add(btnApply);
+
+            Button btnDelete = new Button
+            {
+                Text = "Delete Order",
+                Location = new Point(580, 140),
+                Width = 250,
+                Height = 35,
+                BackColor = Color.FromArgb(180, 60, 60),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat
+            };
+            btnDelete.Click += BtnDelete_Click;
+            Controls.Add(btnDelete);
+
+            Button btnBack = new Button
+            {
+                Text = "Back",
+                Location = new Point(580, 185),
+                Width = 250,
+                Height = 35,
+                BackColor = Color.FromArgb(70, 70, 70),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat
+            };
+            btnBack.Click += (s, e) => Close();
+            Controls.Add(btnBack);
+        }
+
+        private void BtnDelete_Click(object sender, EventArgs e)
+        {
+            Order o = Selected();
+            if (o == null)
+            {
+                MessageBox.Show("Select an order first.", "Info",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+            DialogResult confirm = MessageBox.Show("Delete order #" + o.Id + "?", "Confirm Delete",
+                MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            if (confirm != DialogResult.Yes)
+                return;
+            DataManager.Instance.Orders.Remove(o);
+            DataManager.Instance.SaveAll();
+            LoadGrid();
+            itemsGrid.DataSource = null;
+            MessageBox.Show("Order deleted.", "Success",
+                MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void LoadGrid()
         {
+            DataManager.Instance.Reload();
             grid.DataSource = null;
             grid.DataSource = DataManager.Instance.Orders
                 .OrderByDescending(o => o.OrderDate)

@@ -116,6 +116,19 @@ namespace SmartMedPharmacy.Forms
             };
             btnPrescription.Click += BtnPrescription_Click;
 
+            Button btnBack = new Button
+            {
+                Text = "Back to Dashboard",
+                Location = new Point(560, 463),
+                Width = 180,
+                Height = 32,
+                BackColor = Color.FromArgb(70, 70, 70),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat
+            };
+            btnBack.Click += (s, e) => Close();
+            Controls.Add(btnBack);
+
             Controls.Add(lblName);
             Controls.Add(txtName);
             Controls.Add(lblCat);

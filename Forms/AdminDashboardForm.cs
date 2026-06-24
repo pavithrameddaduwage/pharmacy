@@ -131,14 +131,13 @@ namespace SmartMedPharmacy.Forms
         private void RefreshStats()
         {
             DataManager dm = DataManager.Instance;
-            decimal totalSales = dm.Orders
-                .Where(o => o.Status == "Delivered")
-                .Sum(o => o.Total);
+            dm.Reload();
+            decimal totalSales = dm.Orders.Sum(o => o.Total);
             int stock = dm.Medicines.Sum(m => m.Stock);
             int active = dm.Orders.Count(o => o.Status != "Delivered");
             int expiring = dm.Medicines.Count(m => m.IsExpiringSoon());
 
-            lblSales.Text = totalSales.ToString("C");
+            lblSales.Text = Money.Format(totalSales);
             lblStock.Text = stock.ToString();
             lblActiveOrders.Text = active.ToString();
             lblExpiring.Text = expiring.ToString();

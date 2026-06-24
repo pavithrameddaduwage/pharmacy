@@ -90,6 +90,11 @@ namespace SmartMedPharmacy.Data
                 SaveAll();
         }
 
+        public void Reload()
+        {
+            LoadAll();
+        }
+
         public void SaveAll()
         {
             try

@@ -79,6 +79,11 @@ namespace SmartMedPharmacy.Forms
             Button btnClear = MakeButton("Clear Fields", x, y, Color.Gray);
             btnClear.Width = 315;
             btnClear.Click += (s, e) => ClearFields();
+            y += 50;
+
+            Button btnBack = MakeButton("Back", x, y, Color.FromArgb(70, 70, 70));
+            btnBack.Width = 315;
+            btnBack.Click += (s, e) => Close();
         }
 
         private TextBox AddField(string caption, int x, ref int y)

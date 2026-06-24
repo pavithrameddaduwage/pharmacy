@@ -50,6 +50,7 @@
     <Compile Include="Models\Medicine.cs" />
     <Compile Include="Models\Order.cs" />
     <Compile Include="Models\OrderItem.cs" />
+    <Compile Include="Models\Money.cs" />
     <Compile Include="Data\JsonStorage.cs" />
     <Compile Include="Data\DataManager.cs" />
     <Compile Include="Data\MedicineSearch.cs" />

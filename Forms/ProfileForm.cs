@@ -25,7 +25,7 @@ namespace SmartMedPharmacy.Forms
         private void InitializeComponent()
         {
             Text = "My Profile";
-            Size = new Size(440, 420);
+            Size = new Size(440, 480);
             StartPosition = FormStartPosition.CenterScreen;
             FormBorderStyle = FormBorderStyle.FixedSingle;
             MaximizeBox = false;
@@ -54,6 +54,19 @@ namespace SmartMedPharmacy.Forms
             };
             btnSave.Click += BtnSave_Click;
             Controls.Add(btnSave);
+
+            Button btnBack = new Button
+            {
+                Text = "Back",
+                Location = new Point(inputX, y + 55),
+                Width = 220,
+                Height = 35,
+                BackColor = Color.FromArgb(70, 70, 70),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat
+            };
+            btnBack.Click += (s, e) => Close();
+            Controls.Add(btnBack);
         }
 
         private TextBox AddField(string caption, int x, int inputX, ref int y)

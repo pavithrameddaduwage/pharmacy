@@ -48,6 +48,19 @@ namespace SmartMedPharmacy.Forms
                 Font = new Font("Consolas", 9.5F)
             };
             Controls.Add(txtOutput);
+
+            Button btnBack = new Button
+            {
+                Text = "Back",
+                Location = new Point(20, 510),
+                Width = 700,
+                Height = 32,
+                BackColor = Color.FromArgb(70, 70, 70),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat
+            };
+            btnBack.Click += (s, e) => Close();
+            Controls.Add(btnBack);
         }
 
         private Button MakeButton(string text, Point location)
@@ -68,43 +81,60 @@ namespace SmartMedPharmacy.Forms
 
         private void ShowSalesReport()
         {
+            DataManager.Instance.Reload();
             DataManager dm = DataManager.Instance;
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine("===== SALES REPORT =====");
+            sb.AppendLine("========================= SALES REPORT =========================");
+            sb.AppendLine();
             decimal delivered = dm.Orders.Where(o => o.Status == "Delivered").Sum(o => o.Total);
             decimal pending = dm.Orders.Where(o => o.Status != "Delivered").Sum(o => o.Total);
-            sb.AppendLine("Total orders: " + dm.Orders.Count);
-            sb.AppendLine("Delivered sales: " + delivered.ToString("C"));
-            sb.AppendLine("Outstanding (not delivered): " + pending.ToString("C"));
+            sb.AppendLine("Total orders                 : " + dm.Orders.Count);
+            sb.AppendLine("Total sales (all orders)     : " + Money.Format(dm.Orders.Sum(o => o.Total)));
+            sb.AppendLine("Delivered sales              : " + Money.Format(delivered));
+            sb.AppendLine("Outstanding (not delivered)  : " + Money.Format(pending));
             sb.AppendLine();
-            sb.AppendLine("Order Id | Customer | Date | Status | Total");
+            sb.AppendLine(string.Format("{0,-6} {1,-22} {2,-12} {3,-18} {4,12}",
+                "Id", "Customer", "Date", "Status", "Total"));
+            sb.AppendLine(new string('-', 74));
             foreach (Order o in dm.Orders.OrderByDescending(o => o.OrderDate))
             {
                 Customer c = dm.GetCustomerById(o.CustomerId);
-                sb.AppendLine(string.Format("{0} | {1} | {2} | {3} | {4}",
-                    o.Id, c == null ? "Unknown" : c.FullName,
-                    o.OrderDate.ToString("yyyy-MM-dd"), o.Status, o.Total.ToString("C")));
+                sb.AppendLine(string.Format("{0,-6} {1,-22} {2,-12} {3,-18} {4,12}",
+                    o.Id, Trim(c == null ? "Unknown" : c.FullName, 22),
+                    o.OrderDate.ToString("yyyy-MM-dd"), o.Status, Money.Format(o.Total)));
             }
             txtOutput.Text = sb.ToString();
         }
 
         private void ShowStockReport()
         {
+            DataManager.Instance.Reload();
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine("===== STOCK REPORT =====");
-            sb.AppendLine("Id | Name | Category | Stock | Expiry | ExpiringSoon");
+            sb.AppendLine("========================= STOCK REPORT =========================");
+            sb.AppendLine();
+            sb.AppendLine(string.Format("{0,-4} {1,-18} {2,-16} {3,7} {4,-12} {5,-12}",
+                "Id", "Name", "Category", "Stock", "Expiry", "Expiring"));
+            sb.AppendLine(new string('-', 74));
             foreach (Medicine m in DataManager.Instance.Medicines.OrderBy(m => m.Name))
             {
-                sb.AppendLine(string.Format("{0} | {1} | {2} | {3} | {4} | {5}",
-                    m.Id, m.Name, m.Category, m.Stock,
+                sb.AppendLine(string.Format("{0,-4} {1,-18} {2,-16} {3,7} {4,-12} {5,-12}",
+                    m.Id, Trim(m.Name, 18), Trim(m.Category, 16), m.Stock,
                     m.ExpiryDate.ToString("yyyy-MM-dd"),
-                    m.IsExpiringSoon() ? "YES" : "no"));
+                    m.IsExpiringSoon() ? "YES <<" : "no"));
             }
             txtOutput.Text = sb.ToString();
         }
 
+        private string Trim(string value, int max)
+        {
+            if (string.IsNullOrEmpty(value))
+                return string.Empty;
+            return value.Length <= max ? value : value.Substring(0, max - 1) + "…";
+        }
+
         private void ShowOrderHistory()
         {
+            DataManager.Instance.Reload();
             DataManager dm = DataManager.Instance;
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("===== CUSTOMER ORDER HISTORY =====");
@@ -115,7 +145,7 @@ namespace SmartMedPharmacy.Forms
                 foreach (Order o in orders)
                 {
                     sb.AppendLine("   Order #" + o.Id + " - " + o.OrderDate.ToString("yyyy-MM-dd") +
-                        " - " + o.Status + " - " + o.Total.ToString("C"));
+                        " - " + o.Status + " - " + Money.Format(o.Total));
                 }
             }
             txtOutput.Text = sb.ToString();
@@ -125,6 +155,14 @@ namespace SmartMedPharmacy.Forms
         {
             try
             {
+                DataManager.Instance.Reload();
+                if (DataManager.Instance.Orders.Count == 0)
+                {
+                    MessageBox.Show("There are no orders to export yet. Place an order first.",
+                        "Nothing to Export", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+
                 using (SaveFileDialog dialog = new SaveFileDialog())
                 {
                     dialog.Filter = "CSV files (*.csv)|*.csv";

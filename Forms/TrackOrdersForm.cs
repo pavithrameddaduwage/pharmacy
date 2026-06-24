@@ -23,7 +23,7 @@ namespace SmartMedPharmacy.Forms
         private void InitializeComponent()
         {
             Text = "Track My Orders";
-            Size = new Size(820, 540);
+            Size = new Size(820, 600);
             StartPosition = FormStartPosition.CenterScreen;
             BackColor = Color.White;
 
@@ -52,6 +52,19 @@ namespace SmartMedPharmacy.Forms
                 AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
             };
             Controls.Add(itemsGrid);
+
+            Button btnBack = new Button
+            {
+                Text = "Back to Dashboard",
+                Location = new Point(20, 510),
+                Width = 760,
+                Height = 35,
+                BackColor = Color.FromArgb(70, 70, 70),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat
+            };
+            btnBack.Click += (s, e) => Close();
+            Controls.Add(btnBack);
         }
 
         private void LoadGrid()
